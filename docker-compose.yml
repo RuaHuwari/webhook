@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: webhook_pg
+    restart: always
+    environment:
+      POSTGRES_USER: ruahuwari
+      POSTGRES_PASSWORD: "0595204077"
+      POSTGRES_DB: webhook_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    command: >
+      postgres -c listen_addresses='*' -c password_encryption=scram-sha-256
+
+volumes:
+  pgdata:
