@@ -22,7 +22,8 @@ throw new Error("Invalid token payload");
 }
 return decoded.sub;}
 catch(err){
-throw new Error("Invalid or expired token");
+
+throw new Error("Invalid or expired token",{ cause: err });
 }
 }
 export function getBearerToken(req: Request): string {

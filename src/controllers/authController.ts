@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { createUser, getUserByEmail } from "../db/queries/users.js";
 import jwt from "jsonwebtoken";
 import { checkPasswordHash, hashPassword } from "../auth.js";
-import * as dotenv from "dotenv";
+
 const JWT_SECRET = "aVZZm7cVri4qOIRTO1oRP2deEWwtKmsFimbtenBYIYqfOnSsVCrym88QJpOSLoEwPFM0qLe7uKSsvYWHpwcr8w";
 
 export const signup = async (req: Request, res: Response) => {
