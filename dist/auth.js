@@ -20,7 +20,7 @@ export function validateJWT(tokenString, secret) {
         return decoded.sub;
     }
     catch (err) {
-        throw new Error("Invalid or expired token");
+        throw new Error("Invalid or expired token", { cause: err });
     }
 }
 export function getBearerToken(req) {

@@ -1,3 +1,4 @@
+// import { unique } from 'drizzle-orm/gel-core';
 import { pgTable, serial, text, varchar, integer, json, timestamp } from 'drizzle-orm/pg-core';
 export const users = pgTable('users', {
     id: serial('id').primaryKey(),
