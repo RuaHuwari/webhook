@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { createUser, getUserByEmail } from "../db/queries/users.js";
-import jwt from "jsonwebtoken";
-import { checkPasswordHash, hashPassword } from "../auth.js";
-
-const JWT_SECRET = "aVZZm7cVri4qOIRTO1oRP2deEWwtKmsFimbtenBYIYqfOnSsVCrym88QJpOSLoEwPFM0qLe7uKSsvYWHpwcr8w";
+import { checkPasswordHash, hashPassword, makeJWT } from "../auth.js";
+import * as dotenv from "dotenv";
+dotenv.config()
+const JWT_SECRET = process.env.JWT_SECRET!;
 
 export const signup = async (req: Request, res: Response) => {
   const { email, password ,role} = req.body;
@@ -43,11 +43,7 @@ export const login = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    const token = jwt.sign(
-      { userId: user.id, email: user.email },
-      JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    const token = makeJWT(user.id.toString(),user.role as string,1000000000,JWT_SECRET);
 
     res.json({
       message: "Login successful",

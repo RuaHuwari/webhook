@@ -8,6 +8,34 @@
       "when": 1772975137513,
       "tag": "0000_whole_captain_marvel",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1773145680718,
+      "tag": "0001_dusty_celestials",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1773147563588,
+      "tag": "0002_wet_shadow_king",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1773151930146,
+      "tag": "0003_lucky_bullseye",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1773223343540,
+      "tag": "0004_watery_rachel_grey",
+      "breakpoints": true
     }
   ]
 }

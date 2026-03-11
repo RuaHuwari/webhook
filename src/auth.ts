@@ -3,28 +3,34 @@ import jwt, {JwtPayload} from "jsonwebtoken";
 import crypto from "crypto";
 import { Request } from "express";
 
-type Payload= Pick<JwtPayload, "iss" |"sub" |"iat" |"exp">;
-export function makeJWT(userID:string, expiresIn:number, secret:string):string{
-const iat=Math.floor(Date.now()/1000);
-const payload:  Payload={
-iss:"webhook_db",
-sub: userID,
-iat,
-exp:iat+expiresIn,
-};
-return jwt.sign(payload,secret);
+type Payload= Pick<JwtPayload, "iss" |"sub" |"iat" |"exp"|"role">;
+export function makeJWT(userID: string, role: string, expiresIn: number, secret: string): string {
+  const iat = Math.floor(Date.now() / 1000);
+  const payload: Payload = {
+    iss: "webhook_db",
+    sub: userID,
+    role,       // <-- add role here
+    iat,
+    exp: iat + expiresIn,
+  };
+  return jwt.sign(payload, secret);
 }
-export function validateJWT(tokenString:string, secret:string):string{
-try{
-const decoded=jwt.verify(tokenString,secret)as JwtPayload;
-if(!decoded.sub){
-throw new Error("Invalid token payload");
-}
-return decoded.sub;}
-catch(err){
+export function validateJWT(tokenString: string, secret: string): { userId: string; role: string } {
+  try {
+    const decoded = jwt.verify(tokenString, secret) as JwtPayload & { role?: string };
 
-throw new Error("Invalid or expired token",{ cause: err });
-}
+    if (!decoded.sub) {
+      throw new Error("Invalid token payload");
+    }
+
+    if (!decoded.role) {
+      throw new Error("Role missing in token");
+    }
+
+    return { userId: decoded.sub, role: decoded.role };
+  } catch (err) {
+    throw new Error("Invalid or expired token", { cause: err });
+  }
 }
 export function getBearerToken(req: Request): string {
   const authHeader = req.get("Authorization");

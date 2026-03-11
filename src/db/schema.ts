@@ -1,5 +1,5 @@
 // import { unique } from 'drizzle-orm/gel-core';
-import { pgTable, serial, text, varchar, integer, json, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, varchar, integer, timestamp, jsonb } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -12,8 +12,8 @@ export const users = pgTable('users', {
 export const pipelines = pgTable('pipelines', {
   id: serial('id').primaryKey(),
   user_id: integer('user_id').notNull().references(() => users.id),
+  source_url:text('source_url').notNull().unique().default(''),
   name: varchar('name', { length: 255 }).notNull(),
-  priority: integer('priority').default(5),
   created_at: timestamp('created_at').defaultNow(),
 });
 export const actions = pgTable('actions',{
@@ -24,14 +24,15 @@ export const pipeline_actions= pgTable('pipeline_actions',{
     id: serial('id').primaryKey(),
     pipeline_id: integer('pipeline_id').notNull().references(()=>pipelines.id),
     action_id: integer('action_id').notNull().references(()=>actions.id),
-    priority: integer('priority').notNull().default(5)
 });
 
 export const jobs = pgTable('jobs', {
   id: serial('id').primaryKey(),
   pipeline_action_id: integer('pipeline_action_id').notNull().references(() => pipeline_actions.id),
   status: varchar('status', { length: 50 }).default('pending'),
-  payload: json('payload').notNull(),
+  payload: jsonb('payload').notNull(),
+  result: jsonb('result'),
+  error: text('error'),
   created_at: timestamp('created_at').defaultNow(),
 });
 
@@ -49,3 +50,4 @@ export const subscribers = pgTable('subscribers', {
   url: text('url').notNull(),
   created_at: timestamp('created_at').defaultNow(),
 });
+export type JOB=typeof jobs.$inferInsert;
