@@ -40,3 +40,7 @@ export async function checkPipelineBelongToUser(userId: number, pipelineId: numb
 
   return result[0].user_id === userId;
 }
+export async function getUserPipelines(userId:number){
+  const result=await db.select().from(pipelines).where(eq(pipelines.user_id,userId));
+  return result;
+}

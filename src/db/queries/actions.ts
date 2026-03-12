@@ -9,3 +9,11 @@ export async function getActionByName(name: string) {
 
   return result;
 }
+export async function getActionByID(actionID:number){
+  const result= await db.select().from(actions).where(eq(actions.id,actionID));
+  return result[0];
+}
+export async function getAllActions(){
+  const result = await db.select().from(actions);
+  return result;
+}

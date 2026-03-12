@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { insertPipelineIntoDB } from "../db/queries/pipelines.js";
+import { insertPipelineIntoDB, getUserPipelines } from "../db/queries/pipelines.js";
 import { getActionByName } from "../db/queries/actions.js";
 import { createPipelineAction } from "../db/queries/pipeline_actions.js";
 import { createSubscriber } from "../db/queries/subscribers.js";
@@ -51,3 +51,11 @@ export const createPipeline = async (
     });
   }
 };
+export const getPipelines=async(req:AuthenticatedRequest,res:Response)=>{
+  const userId= parseInt(req.userId as string);
+  const pipelines= await getUserPipelines(userId);
+  if(pipelines.length===0){
+    return res.status(200).json({message:"no pipelines found for you, create one to get started"})
+  }
+  return res.status(200).json(pipelines);
+}

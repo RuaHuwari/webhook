@@ -9,3 +9,10 @@ export async function getUserByEmail(email:string){
 const result= await db.select().from(users).where(eq(users.email,email));
 return result[0];
 };
+export async function isAdmin(userId:number){
+    const result = await db.select().from(users).where(eq(users.id,userId));
+    if(result[0].role ==="admin"){
+        return true;
+    }
+    return false;
+}
