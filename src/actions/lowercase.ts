@@ -1,5 +1,5 @@
-export async function lowercase(data:string){
+export async function lowercase(data:{payload:string}){
     return{
-        result: data.toLowerCase()
+        result: data.payload.toLowerCase()
     };
 }

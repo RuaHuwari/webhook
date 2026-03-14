@@ -1,5 +1,5 @@
-export async function uppercase(data:string){
+export async function uppercase(data:{payload:string}){
     return{
-        result: data.toUpperCase()
+        result: data.payload.toUpperCase()
     };
 }

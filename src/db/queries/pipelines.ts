@@ -44,3 +44,7 @@ export async function getUserPipelines(userId:number){
   const result=await db.select().from(pipelines).where(eq(pipelines.user_id,userId));
   return result;
 }
+export async function getPipelineByID(pipelineID:number){
+  const result= await db.select().from(pipelines).where(eq(pipelines.id,pipelineID));
+  return result[0];
+}

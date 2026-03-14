@@ -12,3 +12,7 @@ export async function getPipelineActions(pipelineId:number){
     const result= await db.select().from(pipeline_actions).where(eq(pipeline_actions.pipeline_id,pipelineId));
     return result;
 }
+export async function getPipelineActionByID(pipelineActionId:number){
+const result = await db.select().from(pipeline_actions).where(eq(pipeline_actions.id,pipelineActionId));
+return result[0];
+}
