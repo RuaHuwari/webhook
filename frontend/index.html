@@ -111,8 +111,14 @@ async function signin(){
     document.getElementById("userButtons").classList.remove("hidden");
   }
 }
+function setEverythingTohidden(){
+  document.getElementById("statusChooser").classList.add("hidden");
+  document.getElementById("pipelineForm").classList.add("hidden");
 
+
+}
 function chooseStatus(){
+  setEverythingTohidden();
   document.getElementById("statusChooser").classList.remove("hidden");
 }
 
@@ -146,6 +152,7 @@ async function fetchHistory(){
 }
 
 function showPipelineForm(){
+  setEverythingTohidden();
   document.getElementById("pipelineForm").classList.remove("hidden");
 }
 

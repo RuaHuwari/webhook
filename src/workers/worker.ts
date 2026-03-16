@@ -1,5 +1,9 @@
-import {uppercase} from "../actions/uppercase.js";
-import {lowercase} from "../actions/lowercase.js";
+import {uppercase} from "../actions/StringActions/uppercase.js";
+import {lowercase} from "../actions/StringActions/lowercase.js";
+import {reversetext} from "../actions/StringActions/reverseText.js";
+import {correctGrammer} from "../actions/AI/correctGrammer.js";
+import { writeArticle } from "../actions/AI/writeArticle.js";
+import { summarizeText } from "../actions/AI/summarizeText.js";
 //import {actions, JOB, pipeline_actions, pipelines} from "../src/db/schema.js";
 import {getOldestPendingJob,setJobToFailed,setJobToSuccess} from "../db/queries/jobs.js";
 import {getActionByID} from "../db/queries/actions.js";
@@ -13,7 +17,11 @@ type ActionResult = {
 
 const jobsactions: Record<string, (input: {payload:string}) => Promise<ActionResult>> = {
   uppercase,
-  lowercase
+  lowercase,
+  reversetext,
+  correctGrammer,
+  summarizeText,
+  writeArticle
 };
 async function sendWithRetry(jobId: number, url: string, data: unknown, maxRetries = 3) {
 
