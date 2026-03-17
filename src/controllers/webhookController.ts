@@ -1,24 +1,16 @@
-import {  Response } from "express";
+import {  Request,Response } from "express";
 import { getPipelineActions} from "../db/queries/pipeline_actions.js";
-import { checkPipelineBelongToUser } from "../db/queries/pipelines.js";
 import { createJob } from "../db/queries/jobs.js";
-import { AuthenticatedRequest } from "../middleware/authMiddleware.js";
-export async function injectWebhook(req: AuthenticatedRequest, res: Response) {
-  try {
-    const user_id= parseInt(req.userId as string);
-    const pipelineId = Number(req.params.pipelineId);
-    const belongs= await checkPipelineBelongToUser(user_id,pipelineId);
-    if(!belongs){
-        return res.status(403).json({error: "unAuthorized access"});
-    }
-    const payload = req.body;
 
+export async function injectWebhook(req: Request, res: Response) {
+  try {
+    const pipelineId = Number(req.params.pipelineId);
     if (!pipelineId) {
       return res.status(400).json({
         message: "Invalid pipelineId"
       });
     }
-
+    const payload = req.body;
     const actions = await getPipelineActions(pipelineId);
 
     if (!actions || actions.length === 0) {
@@ -28,7 +20,10 @@ export async function injectWebhook(req: AuthenticatedRequest, res: Response) {
     }
 
     const createdJobs = [];
-
+    if(typeof(payload.payload) ==='undefined' ){
+      console.log('undefined payload structure, it should have the structure of {payload:string}');
+      return;
+    }
     for (const action of actions) {
       const job = await createJob(action.id, payload);
       createdJobs.push(job);

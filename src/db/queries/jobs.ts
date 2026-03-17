@@ -2,7 +2,8 @@ import { db } from "../index.js";
 import { jobs, pipeline_actions, pipelines } from "../schema.js";
 import { eq ,and} from "drizzle-orm";
 
-export async function createJob(pipelineActionId:number, payload :unknown) {
+export async function createJob(pipelineActionId:number, payload :{payload:string}) {
+  try{
   const [job] = await db.insert(jobs)
     .values({
       pipeline_action_id: pipelineActionId,
@@ -10,7 +11,10 @@ export async function createJob(pipelineActionId:number, payload :unknown) {
       status: 'pending'
     })
     .returning();
-  return job;
+  return job;}
+  catch(err){
+    console.error(err);
+  }
 }
 
 export async function setJobToSuccess(jobId: number , result:unknown) {
@@ -41,7 +45,9 @@ export async function getOldestPendingJob() {
     .from(jobs)
     .where(eq(jobs.status, 'pending'))
     .orderBy(jobs.created_at)
-    .limit(1);
+    .limit(1)
+    .for('update',{skipLocked:true});  
+    //const [updated]= await db.update(jobs).set({status:'in-progress'}).where(eq(jobs.id,job.id));
   return job;
 }
 

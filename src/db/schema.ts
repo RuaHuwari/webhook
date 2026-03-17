@@ -14,6 +14,7 @@ export const pipelines = pgTable('pipelines', {
   user_id: integer('user_id').notNull().references(() => users.id),
   source_url:text('source_url').notNull().unique().default(''),
   name: varchar('name', { length: 255 }).notNull(),
+  webhook_secret: text('webhook_secret').notNull().default('0'),
   created_at: timestamp('created_at').defaultNow(),
 });
 export const actions = pgTable('actions',{

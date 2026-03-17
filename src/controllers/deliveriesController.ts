@@ -52,7 +52,7 @@ export const getDeliveriesforAdmin = async (
 )=>{
     try{
         const userId= parseInt(req.userId as string);
-        if(!isAdmin(userId)){
+        if(!await isAdmin(userId)){
             return res.status(401).json({error:"UnAuthorized access"});
         }
         const status= req.query.status;

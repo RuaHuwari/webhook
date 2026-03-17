@@ -1,0 +1,1 @@
+ALTER TABLE "pipelines" ADD COLUMN "webhook_secret" text DEFAULT '0' NOT NULL;

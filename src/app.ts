@@ -8,6 +8,7 @@ import webhookRoutes from "./routes/webhookRoutes.js";
 import actionsRoutes from "./routes/actionsRoutes.js";
 import deliveriesRoutes from "./routes/deliveriesRoutes.js";
 import {processJob} from "./workers/worker.js";
+import metricsRoutes from "./routes/metricsRoutes.js";
 import cors from "cors";
 const app = express();
 app.use(cors());
@@ -19,6 +20,7 @@ app.use('/jobs',jobRoutes);//handles getting the job history for a user, and all
 app.use('/webhook/',webhookRoutes); //handles the requist to the pipeline source url, creates a job, inserts it to the queue
 app.use('/actions', actionsRoutes);
 app.use('/deliveries',deliveriesRoutes); //to be tested after worker gets some jobs done
+app.use('/metrics',metricsRoutes);
 const PORT = process.env.PORT || 3030;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

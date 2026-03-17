@@ -2,11 +2,11 @@ import { eq } from "drizzle-orm";
 import { db } from "../index.js";
 import { pipelines } from "../schema.js";
 
-export async function insertPipelineIntoDB(userId: number, name: string) {
+export async function insertPipelineIntoDB(userId: number, name: string,webhookSecret:string) {
   try {
     // Step 1: Insert pipeline without source_url
     const [pipeline] = await db.insert(pipelines)
-      .values({ name:name, user_id: userId })
+      .values({ name:name, user_id: userId, webhook_secret:webhookSecret})
       .returning(); // returning the inserted row including id
 
     if (!pipeline?.id) {
@@ -14,7 +14,7 @@ export async function insertPipelineIntoDB(userId: number, name: string) {
     }
 
     // Step 2: Update the source_url with the generated id
-    const source_url = `/webhook/injest/${pipeline.id}`;
+    const source_url = `/webhook/${pipeline.id}`;
     const id= pipeline.id;
     const [updatedPipeline] = await db.update(pipelines)
       .set({ source_url })
@@ -41,7 +41,12 @@ export async function checkPipelineBelongToUser(userId: number, pipelineId: numb
   return result[0].user_id === userId;
 }
 export async function getUserPipelines(userId:number){
-  const result=await db.select().from(pipelines).where(eq(pipelines.user_id,userId));
+  const result=await db.select({
+    id:pipelines.id,
+    name: pipelines.name,
+    url: pipelines.source_url,
+    createdAt: pipelines.created_at
+  }).from(pipelines).where(eq(pipelines.user_id,userId));
   return result;
 }
 export async function getPipelineByID(pipelineID:number){

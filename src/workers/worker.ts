@@ -4,6 +4,7 @@ import {reversetext} from "../actions/StringActions/reverseText.js";
 import {correctGrammer} from "../actions/AI/correctGrammer.js";
 import { writeArticle } from "../actions/AI/writeArticle.js";
 import { summarizeText } from "../actions/AI/summarizeText.js";
+import { getPageContent } from "../actions/HTTPActions/getpagecontent.js";
 //import {actions, JOB, pipeline_actions, pipelines} from "../src/db/schema.js";
 import {getOldestPendingJob,setJobToFailed,setJobToSuccess} from "../db/queries/jobs.js";
 import {getActionByID} from "../db/queries/actions.js";
@@ -21,7 +22,8 @@ const jobsactions: Record<string, (input: {payload:string}) => Promise<ActionRes
   reversetext,
   correctGrammer,
   summarizeText,
-  writeArticle
+  writeArticle,
+  getPageContent
 };
 async function sendWithRetry(jobId: number, url: string, data: unknown, maxRetries = 3) {
 
@@ -66,13 +68,20 @@ const pipelineId=pipelineAction.pipeline_id;
 const actionID= pipelineAction.action_id;
 const action= await getActionByID(actionID);
 //const pipeline=await getPipelineByID(pipelineId);
+if(typeof(action)==='undefined'){
+  console.log('error fetching action name');
+  return;
+}
 const action_name=action.action_name;
 const actionFn = jobsactions[action_name];
 const subscribers= await getSubscripersForPipeline(pipelineId);
 if (!actionFn) {
   throw new Error(`Unknown action: ${action_name}`);
 }
-console.log(job.payload);
+if(job.payload ===''){
+  console.log('there is no payload provided');
+  return;
+}
 const result = await actionFn(job.payload as {payload:string});
 
 const jobId = job.id;

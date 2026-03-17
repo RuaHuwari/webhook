@@ -4,7 +4,7 @@ import { getActionByName } from "../db/queries/actions.js";
 import { createPipelineAction } from "../db/queries/pipeline_actions.js";
 import { createSubscriber } from "../db/queries/subscribers.js";
 import { AuthenticatedRequest } from "../middleware/authMiddleware.js";
-
+import crypto from "crypto";
 export const createPipeline = async (
   req: AuthenticatedRequest,
   res: Response
@@ -18,9 +18,12 @@ export const createPipeline = async (
         message: "Missing required fields"
       });
     }
-
-    const pipeline = await insertPipelineIntoDB(parseInt(userId as string), name);
-
+    const webhookSecret = crypto.randomBytes(32).toString("hex");
+    const pipeline = await insertPipelineIntoDB(
+        parseInt(userId as string),
+        name,
+        webhookSecret
+      );
     const pipelineId = pipeline.id;
 
     for (const actionName of actions) {
@@ -31,7 +34,6 @@ export const createPipeline = async (
           message: `Action ${actionName} not found`
         });
       }
-
       await createPipelineAction(action.id, pipelineId);
     }
 
@@ -41,7 +43,11 @@ export const createPipeline = async (
 
     return res.status(201).json({
       message: "Pipeline created successfully",
-      pipeline
+      pipeline,
+        webhook: {
+          url: `/webhook/${pipeline.id}`,
+          secret: webhookSecret
+        }
     });
 
   } catch (error) {

@@ -7,12 +7,6 @@ services:
       DATABASE_URL: postgres://ruahuwari:0595204077@webhook_pg:5432/webhook_db
     depends_on:
       - webhook_pg
-  frontend:
-    image: nginx:latest
-    volumes:
-      - ./frontend:/usr/share/nginx/html
-    ports:
-      - "8080:80"
   webhook_pg:
     image: postgres:15
     environment:
