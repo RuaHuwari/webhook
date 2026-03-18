@@ -1,6 +1,6 @@
 import { eq ,and} from "drizzle-orm";
 import { db } from "../index.js";
-import { deliveries, jobs, pipeline_actions, pipelines, subscribers } from "../schema.js";
+import { deliveries, jobs, pipeline_actions, pipelines } from "../schema.js";
 
 export async function getDeliveriesForUser(userId:number, status?:string){
     if(status){
