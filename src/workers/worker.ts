@@ -26,8 +26,10 @@ const jobsactions: Record<string, (input: {payload:string}) => Promise<ActionRes
   getPageContent
 };
 async function sendWithRetry(jobId: number, url: string, data: unknown, maxRetries = 3) {
-
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000); // 5s timeout
 
     try {
       const response = await fetch(url, {
@@ -35,25 +37,23 @@ async function sendWithRetry(jobId: number, url: string, data: unknown, maxRetri
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
+        signal: controller.signal
       });
 
-      if (response.ok) {
+      clearTimeout(timeout);
 
+      if (response.ok) {
         await createDeliveryRecord(jobId, url, attempt, "success");
         return true;
-
       } else {
-
         await createDeliveryRecord(jobId, url, attempt, "failed");
-
       }
 
     } catch (error) {
-
+      clearTimeout(timeout);
       await createDeliveryRecord(jobId, url, attempt, "failed");
       console.error(error);
-
     }
   }
 

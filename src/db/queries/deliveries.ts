@@ -1,9 +1,17 @@
 import { eq ,and} from "drizzle-orm";
 import { db } from "../index.js";
-import { deliveries, jobs, pipeline_actions, pipelines } from "../schema.js";
+import { deliveries, jobs, pipeline_actions, pipelines, subscribers } from "../schema.js";
+
 export async function getDeliveriesForUser(userId:number, status?:string){
     if(status){
-        const result= await db.select().from(deliveries)
+        const result= await db.select({
+                    id:deliveries.id,
+        job_id: deliveries.job_id,
+        pipeline_id: pipeline_actions.pipeline_id,
+        subscriber_url:deliveries.subscriber_url,
+        status: deliveries.status,
+        attempt: deliveries.attempt_count
+        }).from(deliveries)
         .leftJoin(jobs,eq(deliveries.job_id,jobs.id))
         .leftJoin(pipeline_actions,eq(jobs.pipeline_action_id,pipeline_actions.id))
         .leftJoin(pipelines,eq(pipeline_actions.pipeline_id,pipelines.id))
@@ -19,7 +27,14 @@ export async function getDeliveriesForUser(userId:number, status?:string){
 };
 export async function getAllDeliveries( status?:string){
 if(status){
-    const result= await db.select().from(deliveries)
+    const result= await db.select({
+        id:deliveries.id,
+        job_id: deliveries.job_id,
+        pipeline_id: pipeline_actions.pipeline_id,
+        subscriber_url:deliveries.subscriber_url,
+        status: deliveries.status,
+        attempt: deliveries.attempt_count
+    }).from(deliveries)
 .leftJoin(jobs,eq(deliveries.job_id,jobs.id))
 .leftJoin(pipeline_actions,eq(jobs.pipeline_action_id,pipeline_actions.id))
 .leftJoin(pipelines,eq(pipeline_actions.pipeline_id,pipelines.id))
@@ -42,7 +57,14 @@ const [result] = await db.insert(deliveries).values({
 return result;
 };
 export async function getDeliveryByPipeline(pipeline_id:number, user_id:number){
-    const result= await db.select().from(deliveries)
+    const result= await db.select({
+                id:deliveries.id,
+        job_id: deliveries.job_id,
+        pipeline_id: pipeline_actions.pipeline_id,
+        subscriber_url:deliveries.subscriber_url,
+        status: deliveries.status,
+        attempt: deliveries.attempt_count
+    }).from(deliveries)
 .leftJoin(jobs,eq(deliveries.job_id,jobs.id))
 .leftJoin(pipeline_actions,eq(jobs.pipeline_action_id,pipeline_actions.id))
 .leftJoin(pipelines,eq(pipeline_actions.pipeline_id,pipelines.id))
